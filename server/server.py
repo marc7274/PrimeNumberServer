@@ -22,8 +22,8 @@ class threadList():
 
 def thread_func(conn:socket.socket, addr, num_min, num_max):
     with conn:
-        conn.sendall(json.dumps({"min":num_min,"num_max":num_max}))
-        recv = conn.recv(1024)
+        conn.sendall(json.dumps({"min":num_min,"max":num_max}).encode('utf-8'))
+        recv = conn.recv(1024).decode('utf-8')
     prime_nums.extend(json.loads(recv))
         
 
@@ -32,7 +32,7 @@ prime_nums = threadList()
                 
 if __name__ == '__main__':
     last_number_given = 0
-    config = json.load(open())
+    config = json.load(open("server/server-config.json","r"))
 
     num_min = int(input("primo numero da calcolare: "))
     num_max = int(input("ultimo numero da calcolare: "))
@@ -44,12 +44,16 @@ if __name__ == '__main__':
 
         while last_number_given<num_max:
             conn,addr = s.accept()
+
             if num_max-last_number_given>=config['range']:
                 threads.append(threading.Thread(target=thread_func,args=(conn,addr,last_number_given+1,last_number_given+config['range'])))
+                threads[-1].start()
             else:
                 threads.append(threading.Thread(target=thread_func,args=(conn,addr,last_number_given+1,last_number_given+(num_max-last_number_given))))
+                threads[-1].start()
             last_number_given+=num_max-last_number_given
+        
         for t in threads:
             t.join()
             
-        json.dump(json.loads(json.dumps(prime_nums.getList,open(config['path-to-output']+"result.json","w"))))
+    json.dump(prime_nums.getList(),open(config['path-to-output']+"result.json","w"))

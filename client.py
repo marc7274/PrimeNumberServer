@@ -17,5 +17,5 @@ def get_primes(lower, upper):
     
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
-    data = json.loads(s.recv(1024))
-    s.sendall(findPrimi(data["min"], data["max"]))
+    data = json.loads(s.recv(1024).decode('utf-8'))
+    s.sendall(json.dumps(get_primes(data["min"], data["max"])).encode('utf-8'))
