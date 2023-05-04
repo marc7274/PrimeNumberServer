@@ -5,17 +5,18 @@ HOST = "127.0.0.1"
 PORT = 65432 
 
 
-def get_primes(lower, upper):
-    numbers = set(range(upper, lower, -1))
+def findPrimi(lower, upper):
     primes = []
-    while numbers:
-        p = numbers.pop()
-        primes.append(p)
-        numbers.difference_update(set(range(p*2, upper+1, p)))
-    return primes
-    
+    for num in range(lower, upper + 1):
+        if num > 1:
+            for i in range(2, num):
+                if (num % i) == 0:
+                    break
+            else:
+                primes = primes.append(num)
+    return primes  
     
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
     data = json.loads(s.recv(1024).decode('utf-8'))
-    s.sendall(json.dumps(get_primes(data["min"], data["max"])).encode('utf-8'))
+    s.sendall(json.dumps(findPrimi(data["min"], data["max"])).encode('utf-8'))
