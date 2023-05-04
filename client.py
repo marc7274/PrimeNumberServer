@@ -6,14 +6,14 @@ PORT = 65432
 
 
 def findPrimi(lower, upper):
-    primes = []
+    primes = list()
     for num in range(lower, upper + 1):
         if num > 1:
             for i in range(2, num):
                 if (num % i) == 0:
                     break
             else:
-                primes = primes.append(num)
+                primes.append(num)
     return primes  
     
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
